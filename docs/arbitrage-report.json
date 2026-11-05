@@ -1,31 +1,34 @@
 {
-  "generatedAt": "2026-11-05T12:03:45.261Z",
-  "trader": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-  "tx": "0xb903f6c9c01b8f6750d7488d3aca38bb34da6a523dfc3a6211cfd1c64074a979",
-  "blockNumber": 238,
-  "gasUsed": "216215",
-  "buy": 1,
-  "sell": 0,
+  "generatedAt": "2026-11-05T16:04:06.174Z",
+  "source": "User-recorded browser operation; verified from local chain receipt and historical reserves",
+  "trader": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+  "tx": "0x3d9ba885d4061af24b23ac840e8c176b10d07fbb8a6f401c74d9ebdefc85a216",
+  "blockNumber": 271,
+  "gasUsed": "218472",
+  "buy": 0,
+  "sell": 1,
   "token": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-  "amountIn": "12000000000000000000",
-  "profit": "107719337772372687",
+  "amountIn": "200000000000000000000",
+  "intermediateAmount": "136093775021162299376",
+  "amountOut": "239135203833803395798",
+  "profit": "39135203833803395798",
   "profitExcludesNativeGas": true,
   "before": [
     {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
       "tokenA": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       "tokenB": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "reserveA": "1997388983455059313912",
-      "reserveB": "2772397809431147459725",
-      "priceBperA": 1.3880109645120235
+      "reserveA": "2064605901853494522926",
+      "reserveB": "2825590795982924619693",
+      "priceBperA": 1.368586030605772
     },
     {
       "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
       "tokenA": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       "tokenB": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "reserveA": "1808200284893953137849",
-      "reserveB": "2449807994435045899835",
-      "priceBperA": 1.3548322135004651
+      "reserveA": "1519805709870087125077",
+      "reserveB": "2917675394958236307070",
+      "priceBperA": 1.9197686756997634
     }
   ],
   "after": [
@@ -33,17 +36,17 @@
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
       "tokenA": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       "tokenB": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "reserveA": "2006176681201793938380",
-      "reserveB": "2760290090093375087038",
-      "priceBperA": 1.3758958101535863
+      "reserveA": "1928512126832332223550",
+      "reserveB": "3025590795982924619693",
+      "priceBperA": 1.5688730985335277
     },
     {
       "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
       "tokenA": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       "tokenB": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "reserveA": "1799412587147218513381",
-      "reserveB": "2461807994435045899835",
-      "priceBperA": 1.3681175801587486
+      "reserveA": "1655899484891249424453",
+      "reserveB": "2678540191124432911272",
+      "priceBperA": 1.6175741435781323
     }
   ]
 }

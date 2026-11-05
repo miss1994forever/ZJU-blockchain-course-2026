@@ -1,28 +1,25 @@
 # Campus AMM · 链上交易实验室
 
-浙江大学区块链课程第二次作业。在助教提供的框架上实现基于恒定乘积 AMM 的 DEX、NFT 流动性凭证、20 地址模拟，以及双交易所原子套利。
+浙江大学区块链课程第二次作业：基于恒定乘积 AMM 的去中心化交易所、ERC721 流动性凭证和跨交易所原子套利。项目基于助教提供的仓库 Fork 实现，运行在本地测试链，资产均为测试币。
 
-> 本项目仅在本地测试链运行。所有代币和 ETH 均为测试资产。
+## 功能与作业要求对应
 
-## 功能
+| 要求                           | 实现与运行证据                                                                |
+| ------------------------------ | ----------------------------------------------------------------------------- |
+| 至少两种 ERC20、多账户分别领取 | ALPHA / BETA 水龙头，每次为调用账户增发 10,000 枚；本地节点为测试账户预置 ETH |
+| 前端创建 AMM 池                | 用户输入两种 ERC20 地址建池；按地址排序，同一交易所内同币对去重               |
+| 恒定乘积交易与手续费           | 根据实际储备计算报价，费率 0.30%，最低输出与截止时间保护                      |
+| 添加/移除流动性、ERC721 NFT    | 每次添加铸造 NFT，记录池、份额、投入及时间；当前持有人销毁 NFT 赎回资产       |
+| 流动性来源与个人凭证           | 展示原始提供者、当前持有人、初始投入、份额、时间及可赎回数量                  |
+| 多用户随机模拟                 | 20 个不同地址，固定种子，四轮交易/添加及后续撤回；逐笔记录哈希并核对储备      |
+| Bonus：两个交易所              | West Lake / Qiantang 独立部署，同一代币对分别维护独立储备和价格               |
+| Bonus：原子套利                | 自动搜索双向报价，一笔交易内完成两次兑换，最低利润不足时整体 revert           |
 
-| 作业要求                   | 实现                                                                 |
-| -------------------------- | -------------------------------------------------------------------- |
-| 至少两种 ERC20、多账户领取 | ALPHA / BETA，账户独立调用 faucet；开发节点为账户预置测试 ETH        |
-| 前端创建池与交易           | 支持普通 ERC20 建池、0.30% 手续费、储备与报价展示、滑点保护          |
-| 添加/撤回流动性与 ERC721   | 每次添加铸造 NFT，包含池、份额、投入、时间；销毁赎回当前份额和手续费 |
-| 查看流动性来源与个人 NFT   | 原始提供者、当前所有者、初始投入、份额、时间、可赎回资产             |
-| 多用户模拟                 | 20 地址、固定种子、多轮交易/添加/撤回，报告记录哈希并验证储备        |
-| Bonus：多个交易所          | West Lake / Qiantang 两个独立 MiniDEX 实例，相同代币对的独立池       |
-| Bonus：原子套利            | 自动报价搜索，一笔交易内完成两次兑换，无利润/最低利润不足整笔回滚    |
+[最终操作视频](docs/campus-amm-demo.mp4) · [实现分析](docs/implementation.md) · [验证记录](docs/validation.md) · [提交与视频内容索引](docs/submission.md)
 
-## 环境
+## 环境与从零运行
 
-- Node.js 22.13+（22 系列）或 24/26；npm；Git。
-- 默认使用 Hardhat 本地节点，无需 Ganache 或公共测试网。
-- 钱包可选：可以直接选择本地节点解锁的教学账户完成操作，也保留浏览器钱包连接。
-
-## 从零运行
+Node.js 22.13+（22 系列）或 24/26、npm、Git。使用 Hardhat 本地节点，不需要公共测试网或 Ganache。Solidity 0.8.20 固定为 npm 依赖，通过本地 solc-js 编译。
 
 ```bash
 git clone https://github.com/miss1994forever/ZJU-blockchain-course-2026.git
@@ -31,54 +28,77 @@ npm run install:all
 npm test
 ```
 
-在**终端一**启动本地链，保持运行：
+**终端一：启动测试链并保持运行。**
 
 ```bash
 npm run node
 ```
 
-在**终端二**部署并启动前端：
+**终端二：部署合约，启动前端。**
 
 ```bash
 npm run deploy
 npm run dev
 ```
 
-打开 http://localhost:3000 。部署脚本会自动导出 ABI、地址到 `frontend/src/generated/`，并在两所分别创建与注入 ALPHA/BETA 池，各投入两种币各 2,000 枚。
+打开终端打印的前端地址，默认 http://localhost:3000 。**8545 是区块链 JSON-RPC 接口端口，3000 是网页端口。**
 
-重新启动节点会清空链上状态，必须重新运行 `npm run deploy`。仓库中的部署地址和报告是一次本地运行的记录，不代表任何公共链部署。不要对仍在使用的链重复部署后继续操作旧页面。
+部署脚本会自动创建两种代币、两个交易所和套利合约，在两个交易所各初始化一个 ALPHA/BETA 池，各存入两种代币各 2,000 枚，并导出 ABI 和地址到 `frontend/src/generated/`。
 
-### 多用户模拟与套利
+节点重启会清空链上状态，必须重新部署并刷新网页。仓库中的部署地址和运行报告属于本地运行记录，不代表公共链部署。
 
-保持节点运行，在项目根目录执行：
+### 多用户模拟
+
+保持节点运行，在另一个终端、项目根目录执行：
 
 ```bash
 npm run simulate
+```
+
+20 个测试地址分别领取代币和授权，在两所的 #1 池中执行四轮随机操作并撤回部分 NFT。运行结束会核对整个交易所实际代币余额与各池储备合计，输出：
+
+```text
+Simulation complete: 20 users; ... Reserve balances verified.
+```
+
+报告写入 `docs/simulation-report.json` 和 `frontend/public/simulation-report.json`。网页点击「刷新数据」，查看「多用户运行记录」和流动性来源。次数为本轮统计，不是累计总量；固定种子下多轮运行的次数可能相同，余额和储备会继续变化。已烧毁的历史 NFT 会被跳过。
+
+最终录屏对应的模拟报告为：20 个地址、43 次兑换、37 次添加、13 次撤回。报告是运行时快照，录屏后的操作不会倒写历史报告。
+
+### 前端完整操作
+
+1. 选择本地教学账户（例如账户 3），领取 ALPHA 和 BETA。
+2. 选择 West Lake 的 #1 池，输入 10 ALPHA 并兑换，观察余额、储备和报价变化。
+3. 若要展示创建新币对，执行下方的额外代币命令；使用终端打印的地址，与 ALPHA 地址在前端创建新池。
+4. 添加流动性，查看铸造的 NFT 及流动性来源。可以先在同一个池交易，再查看可赎回资产变化。
+5. 销毁对应 NFT，取回该份额的资产，凭证随之失效。销毁最后一个用户凭证后只剩极少量锁定流动性，不适合继续大额交易。
+6. 在套利区域比较两所 #1 ALPHA/BETA 池的价格，制造价差、搜索并执行套利。
+
+```bash
+npm run extra-token
+```
+
+该命令部署额外的 18 位小数 GAMMA 代币，并给账户 3 发放 10,000 枚。**使用当次输出的代币地址，不要把用户账户地址当作代币地址。** 每执行一次会产生一个新合约；同币对不能在同所重复创建。
+
+前端会把额外代币显示为缩写地址；池内 A/B 根据地址排序，A 不一定是名为 ALPHA 的代币。
+
+### 原子套利
+
+前端操作：点击「在 Qiantang 交易 400 B」形成价差，再点击「搜索套利机会」和「一笔交易执行套利」。前端搜索固定离散本金，不保证全局最优。
+
+也可以执行脚本：
+
+```bash
 npm run arbitrage
 ```
 
-- 模拟使用 20 个地址，执行四轮操作并撤回部分 NFT；剩余 NFT 可以在前端切换账户查看。
-- 套利脚本先通过普通交易制造价差，再扫描两个方向、两种本金代币、1–300 整数本金，选择范围内最佳正收益路线并调用原子套利合约。
-- 输出报告到 `docs/*-report.json` 和 `frontend/public/*-report.json`。前端点击「刷新数据」读取报告。
-- 报告利润已扣除两次 DEX 手续费，未扣除 ETH Gas；报告独立记录 gasUsed。
+脚本先通过普通交易制造价差，再比较两个方向、两种本金代币、1–300 整数本金的报价，执行搜索范围内利润最高的正收益路线。输出前后储备、价格、本金、利润、交易哈希和 Gas 用量，保存到 `docs/arbitrage-report.json` 与前端 public 目录。
 
-### 前端操作流程
+最终视频中的套利使用 200 BETA 本金，输出约 239.135204 BETA，净增 **39.135204 BETA**。该结果已通过本地链交易回执和历史储备核对；完整数据见 [套利报告](docs/arbitrage-report.json)。利润已扣除两次 DEX 手续费，**未扣除以 ETH 支付的 Gas**。
 
-1. 选择一个本地教学账户，点击「领取 ALPHA + BETA 测试币」。
-2. 在 West Lake 的 ALPHA/BETA 池输入金额并兑换，观察储备及报价变化。
-3. 切换「流动性」，填写两种币的最大投入量，添加后查看「我的流动性凭证」。
-4. 查看 NFT 对应的初始投入、份额、时间及可赎回额；在其他账户交易后，销毁 NFT 取回当前资产。
-5. 展开流动性来源，观察各用户的 NFT 与投入记录。
-6. 查看 West Lake / Qiantang 的价格，点击「在 Qiantang 交易 400 B」制造价差，然后「搜索套利机会」并「一笔交易执行套利」。
-7. 查看前后价格、储备、利润和交易哈希。
+### 钱包与检查命令
 
-两种代币按地址排序为池内 A / B，A 不一定是名称 ALPHA，请以界面标注为准。创建新池时输入两种不同的 ERC20 地址；同所同币对不能重复建池，可运行 `npm run extra-token` 部署第三种 TestToken（GAMMA），终端会打印地址并给账户 3 发放 10,000 枚，再用账户 3 创建其他币对。
-
-### 钱包模式
-
-连接本地网络：RPC `http://127.0.0.1:8545`、Chain ID `31337`、币种 ETH。使用 Hardhat 节点显示的**开发账户**进行演示，也可自行创建钱包并用本地解锁账户转入测试 ETH。不要导入真实资产账户作为开发账户。
-
-### 检查与构建
+本地教学账户模式直接使用开发节点解锁的账户，不保存私钥。也实现了浏览器钱包连接：RPC `http://127.0.0.1:8545`，Chain ID `31337`，币种 ETH。最终录屏使用本地教学账户；本次未对 MetaMask 扩展进行实测。
 
 ```bash
 npm test
@@ -86,50 +106,66 @@ npm run typecheck --prefix contracts
 npm run build
 ```
 
-Solidity 0.8.20 已作为 npm 依赖固定，编译使用本地 solc-js，无需额外下载编译器。前端生产包位于 `frontend/build/`；即便使用生产包，仍需本地节点与正确部署地址。
+前端生产包位于 `frontend/build/`，仍需本地节点与对应部署地址。
 
-## 目录与实现分析
+## 核心实现分析
+
+- **交易公式**：`dy = floor(dx * 9970 * y / (x * 10000 + dx * 9970))`。输入全额进入储备，0.30% 手续费留在池中，交易后的恒定乘积逐步增长。
+- **流动性份额**：首笔总份额为 `floor(sqrt(a*b))`，其中 1,000 个最小份额单位永久锁定；后续添加按当前比例取用用户最大投入量并计算份额，多余代币不转入。
+- **NFT 赎回**：每个 NFT 对应一笔独立份额。赎回量为该份额占总份额比例对应的当前储备；NFT 可以转移，赎回权属于当前持有人。销毁后不能再次赎回。
+- **手续费分配**：全部留在储备，已有份额按比例分享，撤回时随对应资产兑现。赎回额与初始投入的差异还包含价格变化，不能直接全部称为手续费收入。
+- **原子性**：链下搜索只负责报价；`AtomicArbitrage.execute` 在一次链上交易中调用两个池。最终输出须覆盖本金、满足最低利润且利润为正，否则 revert 恢复两次兑换涉及的状态。
+- **保护与边界**：SafeERC20、重入保护、滑点和截止时间检查、uint112 储备上限。支持普通 ERC20；前端支持 18 位小数，不支持收费转账、重基等非标准行为。不实现闪电贷、V3 集中流动性或同所三角套利。
+
+详细设计见 [实现说明](docs/implementation.md)。
+
+## 最终视频与截图
+
+最终视频由提交者自行录制：约 **1 分 33 秒**，原分辨率 **1716 × 1938**，压缩为 H.264 / 20 fps，无音轨。压缩保留全部操作内容，未剪切或替换页面状态。
+
+[下载最终操作视频](docs/campus-amm-demo.mp4)。截图均从该视频提取，并实际保存在本仓库。
+
+| 内容                   | 视频位置（约） | 截图                                                                                                                                            |
+| ---------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| 账户与领取测试币       | 0–11 秒        | [账户余额](docs/screenshots/submission/account.jpg)                                                                                             |
+| 代币兑换与储备变化     | 11–23 秒       | [兑换](docs/screenshots/submission/swap.jpg)                                                                                                    |
+| 前端创建新交易池       | 23–31 秒       | [创建池](docs/screenshots/submission/create-pool.jpg)                                                                                           |
+| 添加流动性、NFT 与赎回 | 31–53 秒       | [流动性](docs/screenshots/submission/liquidity.jpg)、[NFT](docs/screenshots/submission/nft.jpg)、[赎回](docs/screenshots/submission/redeem.jpg) |
+| 多用户记录与套利       | 53–84 秒       | [运行统计](docs/screenshots/submission/simulation.jpg)、[套利结果](docs/screenshots/submission/arbitrage.jpg)                                   |
+| 不同用户的流动性来源   | 84–93 秒       | [来源列表](docs/screenshots/submission/sources.jpg)                                                                                             |
+
+### 兑换
+
+![代币兑换及链上储备](docs/screenshots/submission/swap.jpg)
+
+### 流动性凭证
+
+![NFT 的份额、投入、时间和可赎回资产](docs/screenshots/submission/nft.jpg)
+
+### 原子套利
+
+![套利利润、前后价格与储备](docs/screenshots/submission/arbitrage.jpg)
+
+## 目录
 
 ```text
-contracts/contracts/TestToken.sol        ERC20 水龙头
-contracts/contracts/MiniDEX.sol          多池 AMM、NFT 份额、费用与赎回
-contracts/contracts/AtomicArbitrage.sol  原子套利
-contracts/scripts/                      部署、随机模拟、套利搜索
-contracts/test/testMiniDEX.ts            合约与回滚测试
-frontend/src/App.tsx                     React 交互界面
-frontend/src/generated/                  部署脚本输出 ABI 与本地地址
-docs/implementation.md                  公式、份额与设计边界
-docs/*-report.json                       运行证据
+contracts/contracts/      ERC20、AMM/NFT、原子套利合约
+contracts/scripts/        部署、模拟、套利、额外代币脚本
+contracts/test/           合约正确性、赎回权限和失败回滚测试
+frontend/src/             React 页面、部署生成的 ABI 与地址
+deployments/              本地部署记录
+docs/                     实现分析、验证记录、视频、截图及运行报告
 ```
-
-完整公式与功能分析见 [实现说明](docs/implementation.md)，验证结果见 [验证记录](docs/validation.md)，录制顺序见 [视频演示脚本](docs/demo-script.md)。
-
-## 截图
-
-截图文件保存在仓库 `docs/screenshots/`，展示实际链上交互，不依赖外部图片地址。
-
-![真实链上交易界面](docs/screenshots/overview.jpg)
-
-![NFT 流动性与新建池](docs/screenshots/liquidity.jpg)
-
-![原子套利与多用户运行结果](docs/screenshots/arbitrage-result.jpg)
-
-## 实际操作视频
-
-[下载约 1 分 43 秒的演示 MP4](docs/campus-amm-demo.mp4) · [中文字幕 SRT](docs/campus-amm-demo.srt)
-
-视频为实际浏览器操作的低帧率录屏，无旁白，MP4 内含默认中文字幕轨；播放器如未显示字幕可加载 SRT。展示领币、兑换、创建新池、添加流动性、NFT 赎回、套利与多用户报告。视频录制时的模拟报告另存为 `docs/simulation-demo-report.json`，后续重复运行报告可能不同。视频使用额外部署的 GAMMA 测试建池，其地址在重新部署时可能变化。
 
 ## 提交
 
-- 公开仓库链接：https://github.com/miss1994forever/ZJU-blockchain-course-2026
-- 随仓库提供 README、实现说明和实际运行截图。
-- 单独录制 1–2 分钟视频，完整展示启动后的核心操作、链上交互和套利结果；文件名按课程要求使用「学号*姓名*作业2」。
-- 邮件提交使用课程指定收件地址；不要将源码作为压缩包代替公开仓库链接。
+公开仓库：https://github.com/miss1994forever/ZJU-blockchain-course-2026
 
-## 参考与 AI 辅助
+按课程要求提交公开仓库链接和压缩后的视频。视频文件名及邮件主题使用 `学号_姓名_作业2`；源码、README 和截图均在仓库中。邮件发送由提交者完成。
 
-- [助教原始框架](https://github.com/LBruyne/ZJU-blockchain-course-2026)：保留 Hardhat / React / TypeScript 项目结构与环境配置。
-- [Uniswap 费用模型](https://developers.uniswap.org/docs/get-started/concepts/fees)：恒定乘积交易与手续费计入储备的思路。项目未实现协议抽成。
-- [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/5.x/)：ERC20、ERC721、SafeERC20、ReentrancyGuard、Math、Base64。
-- 使用 AI 辅助设计、编写及验证；提交者应理解合约状态变化、份额计算与原子回滚机制，并按课程规则说明使用情况。
+## 参考与 AI 使用说明
+
+- [助教原始框架](https://github.com/LBruyne/ZJU-blockchain-course-2026)：Fork 后保留并扩展 Hardhat / React / TypeScript 项目结构。
+- [Uniswap 手续费模型](https://developers.uniswap.org/docs/get-started/concepts/fees)：参考恒定乘积 AMM 与手续费计入储备的机制；项目没有实现协议抽成。
+- [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/5.x/)：使用 ERC20、ERC721、SafeERC20、ReentrancyGuard、Math、Base64 等标准组件。
+- AI 参与了方案设计、主要新增代码的生成和修改、测试及文档整理；提交者进行了页面操作、练习和最终视频录制。本项目未引用其他同学的作业，参考来源如上列明。
