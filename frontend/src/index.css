@@ -1,13 +1,111 @@
+* {
+  box-sizing: border-box;
+}
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background: #eef4f8;
+  color: #12354b;
+  font-family: "Avenir Next", "PingFang SC", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
 }
-
+button,
+input,
+select {
+  font: inherit;
+}
+button,
+a,
+input,
+select,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 3px solid #12a7a0;
+  outline-offset: 3px;
+}
+button {
+  color: #12354b;
+  background: #fff;
+  border: 1px solid #cbdce7;
+  padding: 10px 16px;
+  border-radius: 9px;
+  transition: background 0.15s;
+}
+button:hover:not(:disabled) {
+  background: #e5f1f7;
+}
+input,
+select {
+  color: #12354b;
+  border: 1px solid #cbdce7;
+  border-radius: 8px;
+  background: white;
+  padding: 10px;
+  max-width: 100%;
+  min-width: 0;
+}
+a {
+  color: #2878a4;
+}
+small {
+  font-size: 12px;
+  color: #577185;
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+h2 {
+  font-size: 22px;
+  font-weight: 650;
+  letter-spacing: -0.5px;
+}
+h3 {
+  font-size: 16px;
+}
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: "SFMono-Regular", Consolas, monospace;
+}
+summary {
+  cursor: pointer;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  text-align: left;
+  white-space: nowrap;
+  font-size: 12px;
+}
+th,
+td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #dfe9f0;
+}
+th {
+  color: #577185;
+  font-weight: 500;
+}
+label {
+  display: block;
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }

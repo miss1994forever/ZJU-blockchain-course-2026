@@ -1,0 +1,15 @@
+{
+  "name": "campus-amm-lab",
+  "private": true,
+  "scripts": {
+    "install:all": "npm ci --prefix contracts && npm ci --prefix frontend",
+    "test": "npm test --prefix contracts",
+    "node": "npm run node --prefix contracts",
+    "deploy": "npm run deploy --prefix contracts",
+    "simulate": "npm run simulate --prefix contracts",
+    "arbitrage": "npm run arbitrage --prefix contracts",
+    "dev": "npm run dev --prefix frontend",
+    "build": "npm run build --prefix frontend",
+    "extra-token": "npm run extra-token --prefix contracts"
+  }
+}

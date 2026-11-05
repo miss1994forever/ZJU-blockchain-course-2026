@@ -1,0 +1,13 @@
+node_modules/
+build/
+dist/
+contracts/artifacts/
+contracts/cache/
+contracts/types/
+.env
+.env.*
+!.env.example
+.DS_Store
+*.log
+playwright-report/
+test-results/
